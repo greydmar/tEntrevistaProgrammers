@@ -53,16 +53,20 @@ namespace testeProgrammers.CRUD.IU.Views
 
         private void InicializarControles()
         {
-            this.Add(new Label("Nome: "));
-            _txtNome = new TextField(ustring.Empty) {Id = "txtNome"};
+            int xLeft = 2;
+
+            int yTop = 2;
+
+            this.Add(new Label(xLeft, yTop, "Nome: "));
+            _txtNome = new TextField(12, yTop, 40, ustring.Empty) {Id = "txtNome"};
             this.Add(_txtNome);
 
-            this.Add(new Label("Telefone: "));
-            _txtTelefone = new TextField(ustring.Empty) { Id = "txtTelefone" };
+            this.Add(new Label(xLeft, yTop+2, "Telefone: "));
+            _txtTelefone = new TextField(12, yTop + 2, 40, ustring.Empty) { Id = "txtTelefone" };
             this.Add(_txtTelefone);
 
-            this.Add(new Label("E-mail: "));
-            _txtEmail = new TextField(ustring.Empty) { Id = "txtEmail" };
+            this.Add(new Label(xLeft, yTop + 4, "E-mail: "));
+            _txtEmail = new TextField(12, yTop + 4, 40, ustring.Empty) { Id = "txtEmail" };
             this.Add(_txtEmail);
         }
 

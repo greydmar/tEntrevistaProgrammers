@@ -132,7 +132,7 @@ namespace testeProgrammers.CRUD.IU.Views
         {
             var transiente = _controlador.CriarRegistro();
 
-            var resultado = EditorRegistro.Exibir(ModoEdicao.Gravacao, transiente, "Novo Registro", 70, 100);
+            var resultado = EditorRegistro.Exibir(ModoEdicao.Gravacao, transiente, "Novo Registro", 70, 20);
 
             if (resultado.Opcao == ModalResult.Confirmar)
             {

@@ -70,7 +70,7 @@
     <Compile Include="CRUD\IU\Views\JanelaPrincipal.cs" />
     <Compile Include="CRUD\IU\Views\ListagemRegistros.cs" />
     <Compile Include="CRUD\LiteDbImpl\DisposableObject.cs" />
-    <Compile Include="CRUD\LiteDbImpl\IRepository.cs" />
+    <Compile Include="CRUD\LiteDbImpl\LiteDbService.cs" />
     <Compile Include="MundoPequeno\CadernoEnderecos.cs" />
     <Compile Include="MundoPequeno\Endereco.cs" />
     <Compile Include="MundoPequeno\Ponto.cs" />
@@ -79,6 +79,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="db\testeProgrammers.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

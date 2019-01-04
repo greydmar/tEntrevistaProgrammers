@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Mail;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using LiteDB;
 
 namespace testProgrammers.CRUD.Core
@@ -40,10 +36,15 @@ namespace testProgrammers.CRUD.Core
         {
             EnsureNotDisposed();
 
+            if (predicate!=null)
+                return _repositorio
+                    .Query<Registro>(ColecaoRegistros)
+                    .Where(predicate)
+                    .ToList();
+
             return _repositorio
                 .Query<Registro>(ColecaoRegistros)
-                .Where(predicate)
-                .ToEnumerable();
+                .ToList();
         }
 
         public void Gravar(Registro registro)
