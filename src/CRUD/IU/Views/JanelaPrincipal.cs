@@ -31,11 +31,10 @@ namespace testeProgrammers.CRUD.IU.Views
             {
                 new MenuBarItem("_Registros", new MenuItem[]
                 {
-                    new MenuItem("_Novo", "Novo registro", CriarNovoRegistro),
-                    new MenuItem("_Detalhar", "Exibir campos ", ExibirDetalhado),
-                    new MenuItem("_Atualizar", "Atualizar", Atualizar),
-                    new MenuItem("_Remover", "Remover selecionado", RemoverSelecionado),
-
+                    new MenuItem("_Novo", "Novo registro", () => ExceptionSafeAction(CriarNovoRegistro)),
+                    new MenuItem("_Detalhar", "Exibir campos ", () => ExceptionSafeAction(ExibirDetalhado)),
+                    new MenuItem("_Atualizar", "Atualizar", () => ExceptionSafeAction(Atualizar)),
+                    new MenuItem("_Remover", "Remover selecionado", () => ExceptionSafeAction(RemoverSelecionado)),
                 }),
                 new MenuBarItem("_Sair", new MenuItem[]
                 {
@@ -49,6 +48,18 @@ namespace testeProgrammers.CRUD.IU.Views
             this.Add(_menuBar);
             _listagem = InicializarListagem();
             this.Add(_listagem);
+        }
+
+        private void ExceptionSafeAction(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.ErrorQuery(50, 7, "Falha", "Operação falhou. " + ex.Message, new string[] {"OK"});
+            }
         }
 
         private ListagemRegistros InicializarListagem()
