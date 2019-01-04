@@ -18,6 +18,14 @@ namespace testProgrammers.CRUD.Core
 
         public Fichario()
         {
+            LiteDbService.Default.DefinirMapeamento<Registro>(map =>
+            {
+                map.Id(m => m.Id)
+                    .Field(m => m.Nome, "NomeCompleto")
+                    .Field(m => m.Telefone, "Telefone")
+                    .Field(m => m.EndEmail, "Email")
+                    .Ignore(m => m.Email);
+            });
             _repositorio = LiteDbService.Default.GetLiteDbAccess();
 
             InicializarSequenceSeNecessario();
@@ -58,6 +66,10 @@ namespace testProgrammers.CRUD.Core
                 int id = registro.Id;
                 BsonValue result;
                 result = _repositorio.Insert(registro, ColecaoRegistros);
+
+                _repositorio.Database.GetCollection<Registro>(ColecaoRegistros)
+                    .EnsureIndex(reg => reg.Id, true);
+
                 registro.Id = result.AsInt32;
 
                 ExcluirTransiente(id);

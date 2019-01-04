@@ -82,7 +82,9 @@ namespace testProgrammers.CRUD.Core
         private void InicializarInterno()
         {
             _mapper = BsonMapper.Global;
-            
+
+            _mapper.EmptyStringToNull = true;
+
             // Sequences 
             _mapper.Entity<SequenceValueWrapper>()
                 .Id(m => m.Id)
@@ -106,9 +108,10 @@ namespace testProgrammers.CRUD.Core
             base.EnsureNotDisposed("Provedor de acesso ao LiteDb já foi encerrado. Operação indisponível");
         }
 
-        public void DefinirMapeamento()
+        public void DefinirMapeamento<T>(Action<EntityBuilder<T>> mapAction)
         {
-
+            _mapper.EmptyStringToNull = true;
+            mapAction(_mapper.Entity<T>());
         }
 
         public LiteRepository GetLiteDbAccess()
