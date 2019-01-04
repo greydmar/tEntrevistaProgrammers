@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Instrumentation;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using testProgrammers.CRUD.Core;
@@ -48,6 +49,9 @@ namespace testeProgrammers.CRUD.IU.Views
             this.Add(_menuBar);
             _listagem = InicializarListagem();
             this.Add(_listagem);
+
+            Atualizar();
+            Application.Refresh();
         }
 
         private void ExceptionSafeAction(Action action)
@@ -58,24 +62,38 @@ namespace testeProgrammers.CRUD.IU.Views
             }
             catch (Exception ex)
             {
-                MessageBox.ErrorQuery(50, 7, "Falha", "Operação falhou. " + ex.Message, new string[] {"OK"});
+                var msg = string.Concat("Operação falhou. ", "\n", ex.Message.Replace("\r\n","\n"));
+
+                MessageBox.ErrorQuery(80, 08, "Falha", msg, new string[] {"OK"});
             }
         }
 
         private ListagemRegistros InicializarListagem()
         {
-            var frame = new Rect();
+            var bounds = this.Bounds;
+            var frame = new Rect(1, 2, bounds.Width-4, (bounds.Height - this._menuBar.Bounds.Height)-4);
+
             var lv = new ListagemRegistros(frame, " Registros disponíveis")
             {
                 AllowsMarking = true,
                 SourceList = ListarRegistrados,
-                RenderTemplate = (registro) =>
+                ConfigExibicao = new ListagemRegistros.ConfigExibicaoLista()
                 {
-                    return new string[]
+                    Cabecalhos = new[]
                     {
-                        registro.Id.ToString("D3"), registro.Nome, registro.Telefone
-                    };
+                        new {Nome = "ID", Tamanho = 04, Alinhamento = TextAlignment.Left},
+                        new {Nome = "NOME", Tamanho = 30, Alinhamento = TextAlignment.Left},
+                        new {Nome = "TELEFONE", Tamanho = 20, Alinhamento = TextAlignment.Left},
+                        new {Nome = "E-MAIL", Tamanho = 40, Alinhamento = TextAlignment.Left}
+                    },
+                    UsarElipsesTextosLongos = true,
+                    Separador = "||",
+                    RenderizacaoItem = (registro) =>
+                    {
+                        return new string[] {registro.Id.ToString("D3"), registro.Nome, registro.Telefone, registro.Email.Address};
+                    }
                 },
+                CanFocus = true,
             };
             lv.SelectedChanged += SelectedChanged;
 
@@ -111,9 +129,14 @@ namespace testeProgrammers.CRUD.IU.Views
             if (!HaItemItemSelecionado())
                 return;
 
-            var item = _controlador.LocalizarPorId(this._itemSelecionado);
+            var registro = _controlador.LocalizarPorId(this._itemSelecionado);
 
-            EditorRegistro.Exibir(ModoEdicao.Leitura, item, "Detalhamento", 70, 100);
+            var resultado= EditorRegistro.Exibir(ModoEdicao.Gravacao, registro, "Detalhamento", 70, 20);
+
+            if (resultado.Opcao == ModalResult.Confirmar)
+            {
+                _controlador.GravarRegistro(resultado.Registro);
+            }
 
             Atualizar();
         }
@@ -137,6 +160,9 @@ namespace testeProgrammers.CRUD.IU.Views
         {
             this._itemSelecionado = -1;
             this._listagem.Atualizar();
+
+            this.SetNeedsDisplay();
+            //this.Redraw(this.Bounds);
         }
 
         private void CriarNovoRegistro()
@@ -147,7 +173,7 @@ namespace testeProgrammers.CRUD.IU.Views
 
             if (resultado.Opcao == ModalResult.Confirmar)
             {
-                _controlador.GravarRegistro(transiente);
+                _controlador.GravarRegistro(resultado.Registro);
             }
 
             Atualizar();

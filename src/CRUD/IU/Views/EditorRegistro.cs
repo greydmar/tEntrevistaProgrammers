@@ -72,14 +72,20 @@ namespace testeProgrammers.CRUD.IU.Views
 
         public static ResultadoDialogo Exibir(ModoEdicao modo, Registro registro, string titulo, int width, int height)
         {
-            var botoes = new Button[]
-            {
-                new Button("_Gravar", false) {Id = CmdGravar},
-                new Button("_Cancelar", true) {Id = CmdCancelar},
-            };
+            var botoes = modo == ModoEdicao.Gravacao
+                ? new Button[]
+                {
+                    new Button("Gravar", false) {Id = CmdGravar},
+                    new Button("Cancelar", true) {Id = CmdCancelar},
+                }
+                : new Button[]
+                {
+                    new Button("Fechar", true) {Id = CmdCancelar}
+                };
 
             var janela = new EditorRegistro(ustring.Make(titulo), width, height, botoes);
             janela.Renderizar(modo, registro);
+            janela._txtNome.FocusFirst();
 
             Application.Run(janela);
 
@@ -105,8 +111,8 @@ namespace testeProgrammers.CRUD.IU.Views
             this._original = registro;
 
             this._txtEmail.Text = registro.Email?.Address;
-            this._txtNome.Text = registro.Nome??string.Empty;
-            this._txtTelefone.Text = registro.Telefone;
+            this._txtNome.Text = registro.Nome ?? string.Empty;
+            this._txtTelefone.Text = registro.Telefone ?? string.Empty;
         }
 
         private Registro SincronizarModificacoes()
@@ -121,17 +127,17 @@ namespace testeProgrammers.CRUD.IU.Views
 
             int cCount = 0;
 
-            if (this._txtEmail.Text != this._original.Email.Address)
+            if (HaDiferencas(this._txtEmail.Text, this._original.Email.Address))
             {
-                local.Email= new MailAddress(this._txtEmail.Text.ToString());
+                local.Email = new MailAddress(this._txtEmail.Text.ToString());
                 cCount++;
             }
-            if (this._txtNome.Text != this._original.Nome)
+            if (HaDiferencas(this._txtNome.Text, this._original.Nome))
             {
                 local.Nome = this._txtNome.Text.ToString();
                 cCount++;
             }
-            if (this._txtTelefone.Text != this._original.Telefone)
+            if (HaDiferencas(this._txtTelefone.Text, this._original.Telefone))
             {
                 local.Telefone = this._txtTelefone.Text.ToString();
                 cCount++;
@@ -145,5 +151,15 @@ namespace testeProgrammers.CRUD.IU.Views
             return local;
         }
 
+        private static bool HaDiferencas(ustring textValue, string fieldValue)
+        {
+            if (textValue.IsEmpty && string.IsNullOrEmpty(fieldValue))
+                return false;
+
+            if (!textValue.IsEmpty && string.IsNullOrEmpty(fieldValue))
+                return true;
+
+            return !textValue.Equals(fieldValue);
+        }
     }
 }
